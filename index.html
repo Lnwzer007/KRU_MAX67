@@ -311,7 +311,7 @@ let questions = [];
 let answers = [];
 let curQ = 0;
 let score = 0;
-// ฝัง URL ของคุณไว้ตรงนี้เป็นค่าเริ่มต้น
+// ฝัง URL จุดที่ 2
 let sheetUrl = 'https://script.google.com/macros/s/AKfycby6kVfOuiv14F9frKaxIRSTogQ4ceAfB2n6eFBupawS30HCUcv6brTJHPsuQkrvDT0F/exec';
 
 // ===== SETUP =====
@@ -518,7 +518,7 @@ function toggleDrawer(){
   if(d.classList.contains('open')) syncDrawer();
 }
 
-// เช็คหน้าต่างป๊อปอัปให้ปิดเสมอในตอนเริ่มต้นระบบ
+// ปิดหน้าต่างป๊อปอัปเสมอในตอนเริ่มต้นระบบ
 document.getElementById('setupOverlay').style.display = 'none';
 
 function syncDrawer(){
