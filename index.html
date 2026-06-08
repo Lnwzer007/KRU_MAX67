@@ -64,8 +64,12 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .mode-btn.active{background:var(--accent);color:#fff;font-weight:500}
 .group-tabs{display:flex;gap:5px;flex-wrap:wrap}
 .gtab{background:var(--white);border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-family:var(--font);font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s}
-.gtab:hover{border-color:#93c5fd;color:var(--accent)}
 .gtab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+
+/* แก้ไข Sticky Hover สำหรับปุ่มกลุ่มบนคอมพิวเตอร์ */
+@media (hover: hover) {
+  .gtab:hover{border-color:#93c5fd;color:var(--accent)}
+}
 
 /* QUESTION CARD */
 .q-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px 20px 16px;position:relative}
@@ -79,7 +83,12 @@ body{display:flex;flex-direction:column;min-height:100vh}
 /* ANSWERS */
 .answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .ans-btn{background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:13px 14px;font-family:var(--font);font-size:14px;text-align:left;cursor:pointer;color:var(--text);line-height:1.45;transition:border-color .12s,background .12s;min-height:56px;word-break:break-word}
-.ans-btn:hover:not(:disabled){border-color:#93c5fd;background:var(--accent-bg)}
+
+/* แก้ไขจุดนี้: แสดงสีฟ้าเฉพาะตอนใช้เมาส์ชี้บนคอมพิวเตอร์เท่านั้น บนมือถือจะไม่เอ๋อแล้ว */
+@media (hover: hover) {
+  .ans-btn:hover:not(:disabled){border-color:#93c5fd;background:var(--accent-bg)}
+}
+
 .ans-btn.correct{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
 .ans-btn.wrong{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
 .ans-btn:disabled{cursor:default}
@@ -93,7 +102,11 @@ body{display:flex;flex-direction:column;min-height:100vh}
 /* CONTROLS */
 .controls{display:flex;gap:8px;align-items:center}
 .ctrl-btn{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:9px 18px;font-family:var(--font);font-size:14px;cursor:pointer;color:var(--text);transition:all .15s}
-.ctrl-btn:hover:not(:disabled){border-color:#93c5fd;color:var(--accent)}
+
+@media (hover: hover) {
+  .ctrl-btn:hover:not(:disabled){border-color:#93c5fd;color:var(--accent)}
+}
+
 .ctrl-btn:disabled{opacity:.35;cursor:default}
 .ctrl-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
 .ctrl-btn.primary:hover{opacity:.88}
@@ -246,6 +259,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 
   </div>
 
+  <!-- BOARD SIDEBAR (Desktop เท่านั้น) -->
   <div class="board-side">
     <div class="board-head">
       <h2>Community Board</h2>
@@ -264,10 +278,13 @@ body{display:flex;flex-direction:column;min-height:100vh}
 
 </div>
 
+<!-- OVERLAY BACKDROP (คลิกนอกบอร์ดเพื่อปิด) -->
 <div class="board-overlay" id="boardOverlay" onclick="toggleDrawer()"></div>
 
+<!-- BOARD TOGGLE BUTTON (Mobile/iPad) -->
 <button class="board-toggle" onclick="toggleDrawer()">Board</button>
 
+<!-- BOARD DRAWER (Mobile/iPad) -->
 <div class="board-drawer" id="boardDrawer">
   <div class="drawer-handle" onclick="toggleDrawer()"></div>
   <div class="board-head">
@@ -373,6 +390,7 @@ function nextGroupOrRandom(){
   else loadGroup((curGroup + 1) % GROUPS.length);
 }
 
+// ===== RANDOM MODE =====
 function loadRandom(){
   const picked = shuffle([...ALL_ITEMS]).slice(0, 8);
   questions = buildQs(picked);
@@ -524,7 +542,6 @@ function restart(){
 }
 
 // ===== BOARD =====
-// ปรับปรุงฟังก์ชันเปิด-ปิดบอร์ดให้คุมแผ่น Overlay ด้วย
 function toggleDrawer(){
   const d = document.getElementById('boardDrawer');
   const o = document.getElementById('boardOverlay');
