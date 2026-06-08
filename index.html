@@ -24,16 +24,32 @@
   --font:'Noto Sans',sans-serif;
   --r:10px;
 }
+
+/* ชุดสีสำหรับ Dark Mode */
+body.dark-mode {
+  --bg: #121212;
+  --white: #1e1e1e;
+  --border: #2d2d29;
+  --text: #e3e3e0;
+  --muted: #a19e95;
+  --accent: #3b82f6;
+  --accent-bg: #172554;
+  --green-bg: #052e16;
+  --green-bd: #15803d;
+  --red-bg: #451a03;
+  --red-bd: #b45309;
+}
+
 html,body{height:100%;font-family:var(--font);font-size:15px;color:var(--text);background:var(--bg)}
 body{display:flex;flex-direction:column;min-height:100vh}
 
 /* HEADER */
-.header{background:#fff;border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
+.header{background:var(--white);border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:8px;position:sticky;top:0;z-index:50}
 .header-title{font-size:16px;font-weight:600;color:var(--text)}
 .header-sub{font-size:13px;color:var(--muted)}
-.score-pill{margin-left:auto;background:var(--accent-bg);color:var(--accent);border:1px solid #bfdbfe;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:600}
-.settings-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:var(--font);font-size:12px;color:var(--muted);cursor:pointer}
-.settings-btn:hover{border-color:var(--muted)}
+.score-pill{margin-left:auto;background:var(--accent-bg);color:var(--accent);border:1px solid var(--border);border-radius:20px;padding:4px 12px;font-size:13px;font-weight:600}
+.settings-btn{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:var(--font);font-size:12px;color:var(--muted);cursor:pointer}
+.settings-btn:hover{border-color:var(--muted);color:var(--text)}
 
 /* LAYOUT */
 .app{display:flex;flex:1;min-height:0}
@@ -43,26 +59,26 @@ body{display:flex;flex-direction:column;min-height:100vh}
 
 /* MODE + GROUP ROW */
 .top-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.mode-toggle{display:flex;background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.mode-toggle{display:flex;background:var(--white);border:1px solid var(--border);border-radius:8px;overflow:hidden}
 .mode-btn{background:none;border:none;padding:7px 14px;font-family:var(--font);font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s}
 .mode-btn.active{background:var(--accent);color:#fff;font-weight:500}
 .group-tabs{display:flex;gap:5px;flex-wrap:wrap}
-.gtab{background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-family:var(--font);font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s}
+.gtab{background:var(--white);border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-family:var(--font);font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s}
 .gtab:hover{border-color:#93c5fd;color:var(--accent)}
 .gtab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
 
 /* QUESTION CARD */
-.q-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:20px 20px 16px;position:relative}
+.q-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:20px 20px 16px;position:relative}
 .q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
 .q-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
 .q-counter{font-size:12px;color:var(--muted);font-weight:500}
 .q-term{font-size:22px;font-weight:600;line-height:1.3;color:var(--text)}
-.q-progress{margin-top:14px;background:#f0ede8;border-radius:4px;height:3px}
+.q-progress{margin-top:14px;background:var(--bg);border-radius:4px;height:3px}
 .q-bar{height:3px;background:var(--accent);border-radius:4px;transition:width .3s}
 
 /* ANSWERS */
 .answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}
-.ans-btn{background:#fff;border:1.5px solid var(--border);border-radius:9px;padding:13px 14px;font-family:var(--font);font-size:14px;text-align:left;cursor:pointer;color:var(--text);line-height:1.45;transition:border-color .12s,background .12s;min-height:56px;word-break:break-word}
+.ans-btn{background:var(--white);border:1.5px solid var(--border);border-radius:9px;padding:13px 14px;font-family:var(--font);font-size:14px;text-align:left;cursor:pointer;color:var(--text);line-height:1.45;transition:border-color .12s,background .12s;min-height:56px;word-break:break-word}
 .ans-btn:hover:not(:disabled){border-color:#93c5fd;background:var(--accent-bg)}
 .ans-btn.correct{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
 .ans-btn.wrong{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
@@ -76,7 +92,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 
 /* CONTROLS */
 .controls{display:flex;gap:8px;align-items:center}
-.ctrl-btn{background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 18px;font-family:var(--font);font-size:14px;cursor:pointer;color:var(--text);transition:all .15s}
+.ctrl-btn{background:var(--white);border:1px solid var(--border);border-radius:8px;padding:9px 18px;font-family:var(--font);font-size:14px;cursor:pointer;color:var(--text);transition:all .15s}
 .ctrl-btn:hover:not(:disabled){border-color:#93c5fd;color:var(--accent)}
 .ctrl-btn:disabled{opacity:.35;cursor:default}
 .ctrl-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
@@ -86,7 +102,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .prog-txt{font-size:12px;color:var(--muted);white-space:nowrap}
 
 /* RESULT */
-.result-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:28px 20px;text-align:center;display:none}
+.result-card{background:var(--white);border:1px solid var(--border);border-radius:var(--r);padding:28px 20px;text-align:center;display:none}
 .result-card.show{display:block}
 .result-num{font-size:52px;font-weight:700;color:var(--accent);line-height:1}
 .result-of{font-size:14px;color:var(--muted);margin-top:4px}
@@ -94,7 +110,7 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .result-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
 
 /* BOARD SIDEBAR */
-.board-side{width:280px;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;min-height:0}
+.board-side{width:280px;border-left:1px solid var(--border);background:var(--white);display:flex;flex-direction:column;min-height:0}
 .board-head{padding:12px 14px 10px;border-bottom:1px solid var(--border)}
 .board-head h2{font-size:14px;font-weight:600}
 .board-head p{font-size:12px;color:var(--muted);margin-top:1px}
@@ -115,26 +131,14 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .board-empty{text-align:center;color:var(--muted);font-size:13px;padding:16px 10px;line-height:1.6}
 
 /* BOARD TOGGLE (mobile) */
-.board-toggle{display:none;position:fixed;bottom:16px;right:16px;background:var(--accent);color:#fff;border:none;border-radius:50px;padding:10px 18px;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;box-shadow:0 2px 12px rgba(37,99,235,.3);z-index:40}
+.board-toggle{position:fixed;bottom:16px;right:16px;background:var(--accent);color:#fff;border:none;border-radius:50px;padding:10px 18px;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;box-shadow:0 2px 12px rgba(37,99,235,.3);z-index:40}
+@media(min-width:701px){ .board-toggle{display:none} }
 .board-drawer{display:none}
-
-/* SETUP OVERLAY */
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
-.setup-box{background:#fff;border-radius:14px;padding:24px;width:100%;max-width:440px}
-.setup-box h2{font-size:18px;font-weight:600;margin-bottom:6px}
-.setup-box p{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6}
-.setup-box label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500}
-.setup-box input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;margin-bottom:10px}
-.setup-box input:focus{border-color:#93c5fd}
-.setup-note{font-size:12px;color:var(--muted);background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:16px;line-height:1.7}
-.setup-note code{background:#e8e5e0;padding:1px 5px;border-radius:4px;font-size:11px}
-.setup-btns{display:flex;gap:8px;flex-wrap:wrap}
 
 /* RESPONSIVE */
 @media(max-width:700px){
   .board-side{display:none}
-  .board-toggle{display:block}
-  .board-drawer{display:flex;flex-direction:column;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:60;max-height:70vh;border-radius:14px 14px 0 0;overflow:hidden;transform:translateY(100%);transition:transform .25s ease}
+  .board-drawer{display:flex;flex-direction:column;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);z-index:60;max-height:70vh;border-radius:14px 14px 0 0;overflow:hidden;transform:translateY(100%);transition:transform .25s ease}
   .board-drawer.open{transform:translateY(0)}
   .drawer-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 6px}
   .answers{grid-template-columns:1fr}
@@ -153,35 +157,15 @@ body{display:flex;flex-direction:column;min-height:100vh}
 }
 </style>
 </head>
-<body>
-
-<div class="overlay" id="setupOverlay" style="display:none;">
-  <div class="setup-box">
-    <h2>Connect Google Sheet</h2>
-    <p>ใส่ Google Apps Script Web App URL เพื่อเชื่อมบอร์ดกับ Google Sheet</p>
-    <div class="setup-note">
-      วิธีตั้งค่า:<br>
-      1. สร้าง Google Sheet ใหม่ ตั้ง sheet ชื่อ <code>Board</code><br>
-      2. เพิ่ม header row: <code>timestamp</code> | <code>name</code> | <code>message</code><br>
-      3. Extensions > Apps Script > วาง script ด้านล่าง > Deploy > Web App<br>
-      4. Execute as: Me / Access: Anyone > Copy URL
-    </div>
-    <label>Web App URL</label>
-    <input type="url" id="sheetUrl" value="https://script.google.com/macros/s/AKfycbzG_JfJYPp54U2fsq87V5-7Li-kk-nnbrmNdqhqz43BX7YoczrK-6hRBJJkj8NDgz0/exec">
-    <div class="setup-btns">
-      <button class="ctrl-btn primary" onclick="saveUrl()">Save</button>
-      <button class="ctrl-btn" onclick="skipSetup()">ข้ามไปก่อน</button>
-    </div>
-  </div>
-</div>
+<body class="dark-mode">
 
 <div class="header">
   <div>
     <div class="header-title">Vocab Quiz</div>
-    <div class="header-sub">Made by &amp; ไอ้พี</div>
+    <div class="header-sub">Made by ไอ้พี</div>
   </div>
   <div class="score-pill">Score: <span id="scoreDisp">0</span></div>
-  <button class="settings-btn" onclick="showSetup()">Sheet</button>
+  <button class="settings-btn" id="themeBtn" onclick="toggleTheme()"> Light</button>
 </div>
 
 <div class="app">
@@ -311,22 +295,13 @@ let questions = [];
 let answers = [];
 let curQ = 0;
 let score = 0;
-// ฝัง URL จุดที่ 2
-let sheetUrl = 'https://script.google.com/macros/s/AKfycbzG_JfJYPp54U2fsq87V5-7Li-kk-nnbrmNdqhqz43BX7YoczrK-6hRBJJkj8NDgz0/exec';
+let sheetUrl = 'https://script.google.com/macros/s/AKfycby6kVfOuiv14F9frKaxIRSTogQ4ceAfB2n6eFBupawS30HCUcv6brTJHPsuQkrvDT0F/exec';
 
-// ===== SETUP =====
-function saveUrl(){
-  const v = document.getElementById('sheetUrl').value.trim();
-  if(!v){alert('กรุณาใส่ URL');return;}
-  sheetUrl = v;
-  localStorage.setItem('vsUrl', v);
-  document.getElementById('setupOverlay').style.display = 'none';
-  loadBoard();
-}
-function skipSetup(){ document.getElementById('setupOverlay').style.display = 'none'; }
-function showSetup(){
-  document.getElementById('sheetUrl').value = sheetUrl;
-  document.getElementById('setupOverlay').style.display = 'flex';
+// ===== DARK MODE TOGGLE =====
+function toggleTheme() {
+  const isDark = document.body.classList.toggle('dark-mode');
+  localStorage.setItem('vQuizTheme', isDark ? 'dark' : 'light');
+  document.getElementById('themeBtn').textContent = isDark ? ' Light' : ' Dark';
 }
 
 // ===== MODE =====
@@ -354,6 +329,12 @@ function loadGroup(idx){
   questions = buildQs(GROUPS[idx].items);
   startQuiz();
   buildTabs();
+}
+
+// ===== ฟังก์ชันถัดไปกลับมาแล้วครับ =====
+function nextGroupOrRandom(){
+  if(mode === 'random') loadRandom();
+  else loadGroup((curGroup + 1) % GROUPS.length);
 }
 
 function loadRandom(){
@@ -491,9 +472,9 @@ function showResult(){
   document.getElementById('resScore').textContent = score;
   document.getElementById('resTotal').textContent = questions.length;
   document.getElementById('resMsg').textContent =
-    pct === 100 ? 'Perfect! ครบทุกข้อ' :
-    pct >= 70  ? 'Good job! ลองทำอีกครั้งเพื่อทบทวน' :
-                 'Keep going! ฝึกบ่อยๆ จะจำได้เอง';
+    pct === 100 ? 'โหด676767676767' :
+    pct >= 70  ? 'ข้างในไคจาฬู้วว' :
+                 'กากจัด';
   const nb = document.getElementById('nextGroupBtn');
   if(mode === 'random'){
     nb.textContent = 'New Random';
@@ -506,25 +487,19 @@ function restart(){
   if(mode === 'random') loadRandom(); else loadGroup(curGroup);
 }
 
-function nextGroupOrRandom(){
-  if(mode === 'random') loadRandom();
-  else loadGroup((curGroup + 1) % GROUPS.length);
-}
-
 // ===== BOARD =====
 function toggleDrawer(){
   const d = document.getElementById('boardDrawer');
-  d.classList.toggle('open');
-  if(d.classList.contains('open')) syncDrawer();
+  if(d) {
+    d.classList.toggle('open');
+    if(d.classList.contains('open')) syncDrawer();
+  }
 }
-
-// ปิดหน้าต่างป๊อปอัปเสมอในตอนเริ่มต้นระบบ
-document.getElementById('setupOverlay').style.display = 'none';
 
 function syncDrawer(){
   const msgs = document.getElementById('bMsgs');
   const msgs2 = document.getElementById('bMsgs2');
-  msgs2.innerHTML = msgs.innerHTML;
+  if(msgs2 && msgs) msgs2.innerHTML = msgs.innerHTML;
 }
 
 async function postMsg(){
@@ -579,6 +554,7 @@ async function loadBoard(){
 
 function renderMsgs(msgs){
   const c = document.getElementById('bMsgs');
+  if(!c) return;
   if(!msgs.length){ c.innerHTML = '<div class="board-empty">ยังไม่มีข้อความ</div>'; return; }
   c.innerHTML = '';
   [...msgs].reverse().forEach(m => {
@@ -589,6 +565,7 @@ function renderMsgs(msgs){
 
 function addMsg(name, text){
   const c = document.getElementById('bMsgs');
+  if(!c) return;
   const empty = c.querySelector('.board-empty');
   if(empty) empty.remove();
   c.prepend(mkMsg(name, text, null));
@@ -614,6 +591,14 @@ function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').rep
 function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
 
 // ===== INIT =====
+if (localStorage.getItem('vQuizTheme') === 'light') {
+  document.body.classList.remove('dark-mode');
+  document.getElementById('themeBtn').textContent = 'Dark';
+} else {
+  document.body.classList.add('dark-mode');
+  document.getElementById('themeBtn').textContent = 'Light';
+}
+
 buildTabs();
 loadGroup(0);
 if(sheetUrl){ loadBoard(); setInterval(loadBoard, 20000); }
