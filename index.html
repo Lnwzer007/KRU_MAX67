@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Vocab Quiz</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f7f7f5;
+  --white:#ffffff;
+  --border:#e0ddd8;
+  --text:#1c1c1a;
+  --muted:#888580;
+  --accent:#2563eb;
+  --accent-bg:#eff6ff;
+  --green:#16a34a;
+  --green-bg:#f0fdf4;
+  --green-bd:#bbf7d0;
+  --red:#dc2626;
+  --red-bg:#fef2f2;
+  --red-bd:#fecaca;
+  --font:'Noto Sans',sans-serif;
+  --r:10px;
+}
+html,body{height:100%;font-family:var(--font);font-size:15px;color:var(--text);background:var(--bg)}
+body{display:flex;flex-direction:column;min-height:100vh}
+
+/* HEADER */
+.header{background:#fff;border-bottom:1px solid var(--border);padding:12px 16px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:50}
+.header-title{font-size:16px;font-weight:600;color:var(--text)}
+.header-sub{font-size:13px;color:var(--muted)}
+.score-pill{margin-left:auto;background:var(--accent-bg);color:var(--accent);border:1px solid #bfdbfe;border-radius:20px;padding:4px 12px;font-size:13px;font-weight:600}
+.settings-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:var(--font);font-size:12px;color:var(--muted);cursor:pointer}
+.settings-btn:hover{border-color:var(--muted)}
+
+/* LAYOUT */
+.app{display:flex;flex:1;min-height:0}
+
+/* QUIZ MAIN */
+.quiz-main{flex:1;padding:16px;display:flex;flex-direction:column;gap:14px;overflow-y:auto;min-width:0}
+
+/* MODE + GROUP ROW */
+.top-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.mode-toggle{display:flex;background:#fff;border:1px solid var(--border);border-radius:8px;overflow:hidden}
+.mode-btn{background:none;border:none;padding:7px 14px;font-family:var(--font);font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s}
+.mode-btn.active{background:var(--accent);color:#fff;font-weight:500}
+.group-tabs{display:flex;gap:5px;flex-wrap:wrap}
+.gtab{background:#fff;border:1px solid var(--border);border-radius:7px;padding:6px 12px;font-family:var(--font);font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s}
+.gtab:hover{border-color:#93c5fd;color:var(--accent)}
+.gtab.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+
+/* QUESTION CARD */
+.q-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:20px 20px 16px;position:relative}
+.q-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.q-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.6px}
+.q-counter{font-size:12px;color:var(--muted);font-weight:500}
+.q-term{font-size:22px;font-weight:600;line-height:1.3;color:var(--text)}
+.q-progress{margin-top:14px;background:#f0ede8;border-radius:4px;height:3px}
+.q-bar{height:3px;background:var(--accent);border-radius:4px;transition:width .3s}
+
+/* ANSWERS */
+.answers{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.ans-btn{background:#fff;border:1.5px solid var(--border);border-radius:9px;padding:13px 14px;font-family:var(--font);font-size:14px;text-align:left;cursor:pointer;color:var(--text);line-height:1.45;transition:border-color .12s,background .12s;min-height:56px;word-break:break-word}
+.ans-btn:hover:not(:disabled){border-color:#93c5fd;background:var(--accent-bg)}
+.ans-btn.correct{background:var(--green-bg);border-color:var(--green-bd);color:var(--green)}
+.ans-btn.wrong{background:var(--red-bg);border-color:var(--red-bd);color:var(--red)}
+.ans-btn:disabled{cursor:default}
+
+/* FEEDBACK */
+.feedback{border-radius:8px;padding:11px 14px;font-size:13px;display:none;line-height:1.5}
+.feedback.show{display:block}
+.feedback.correct{background:var(--green-bg);color:var(--green);border:1px solid var(--green-bd)}
+.feedback.wrong{background:var(--red-bg);color:var(--red);border:1px solid var(--red-bd)}
+
+/* CONTROLS */
+.controls{display:flex;gap:8px;align-items:center}
+.ctrl-btn{background:#fff;border:1px solid var(--border);border-radius:8px;padding:9px 18px;font-family:var(--font);font-size:14px;cursor:pointer;color:var(--text);transition:all .15s}
+.ctrl-btn:hover:not(:disabled){border-color:#93c5fd;color:var(--accent)}
+.ctrl-btn:disabled{opacity:.35;cursor:default}
+.ctrl-btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.ctrl-btn.primary:hover{opacity:.88}
+.prog-wrap{flex:1;background:var(--border);border-radius:4px;height:3px;margin-left:4px}
+.prog-bar{height:3px;background:var(--accent);border-radius:4px;transition:width .3s}
+.prog-txt{font-size:12px;color:var(--muted);white-space:nowrap}
+
+/* RESULT */
+.result-card{background:#fff;border:1px solid var(--border);border-radius:var(--r);padding:28px 20px;text-align:center;display:none}
+.result-card.show{display:block}
+.result-num{font-size:52px;font-weight:700;color:var(--accent);line-height:1}
+.result-of{font-size:14px;color:var(--muted);margin-top:4px}
+.result-msg{font-size:14px;color:var(--text);margin:14px 0;line-height:1.6}
+.result-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
+
+/* BOARD SIDEBAR */
+.board-side{width:280px;border-left:1px solid var(--border);background:#fff;display:flex;flex-direction:column;min-height:0}
+.board-head{padding:12px 14px 10px;border-bottom:1px solid var(--border)}
+.board-head h2{font-size:14px;font-weight:600}
+.board-head p{font-size:12px;color:var(--muted);margin-top:1px}
+.board-form{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+.board-form input,.board-form textarea{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-family:var(--font);font-size:13px;color:var(--text);outline:none;resize:none;width:100%}
+.board-form input:focus,.board-form textarea:focus{border-color:#93c5fd}
+.board-form textarea{height:60px}
+.post-btn{background:var(--accent);color:#fff;border:none;border-radius:7px;padding:8px;font-family:var(--font);font-size:13px;cursor:pointer;font-weight:500;transition:opacity .15s}
+.post-btn:hover{opacity:.85}
+.post-btn:disabled{opacity:.5;cursor:default}
+.board-status{font-size:11px;color:var(--muted);text-align:center;padding:3px 12px;min-height:18px}
+.board-status.err{color:var(--red)}
+.board-msgs{flex:1;overflow-y:auto;padding:8px 12px;display:flex;flex-direction:column;gap:8px}
+.msg-item{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:9px 11px}
+.msg-name{font-size:12px;font-weight:600;color:var(--accent);margin-bottom:2px}
+.msg-text{font-size:13px;line-height:1.45;word-break:break-word}
+.msg-time{font-size:11px;color:var(--muted);margin-top:3px}
+.board-empty{text-align:center;color:var(--muted);font-size:13px;padding:16px 10px;line-height:1.6}
+
+/* BOARD TOGGLE (mobile) */
+.board-toggle{display:none;position:fixed;bottom:16px;right:16px;background:var(--accent);color:#fff;border:none;border-radius:50px;padding:10px 18px;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;box-shadow:0 2px 12px rgba(37,99,235,.3);z-index:40}
+.board-drawer{display:none}
+
+/* SETUP OVERLAY */
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+.setup-box{background:#fff;border-radius:14px;padding:24px;width:100%;max-width:440px}
+.setup-box h2{font-size:18px;font-weight:600;margin-bottom:6px}
+.setup-box p{font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.6}
+.setup-box label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500}
+.setup-box input{width:100%;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:10px 12px;font-family:var(--font);font-size:14px;color:var(--text);outline:none;margin-bottom:10px}
+.setup-box input:focus{border-color:#93c5fd}
+.setup-note{font-size:12px;color:var(--muted);background:var(--bg);border-radius:8px;padding:10px 12px;margin-bottom:16px;line-height:1.7}
+.setup-note code{background:#e8e5e0;padding:1px 5px;border-radius:4px;font-size:11px}
+.setup-btns{display:flex;gap:8px;flex-wrap:wrap}
+
+/* RESPONSIVE */
+@media(max-width:700px){
+  .board-side{display:none}
+  .board-toggle{display:block}
+  .board-drawer{display:flex;flex-direction:column;position:fixed;bottom:0;left:0;right:0;background:#fff;border-top:1px solid var(--border);z-index:60;max-height:70vh;border-radius:14px 14px 0 0;overflow:hidden;transform:translateY(100%);transition:transform .25s ease}
+  .board-drawer.open{transform:translateY(0)}
+  .drawer-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 6px}
+  .answers{grid-template-columns:1fr}
+  .q-term{font-size:19px}
+  .quiz-main{padding:12px}
+  .top-row{gap:6px}
+}
+@media(max-width:380px){
+  .mode-btn{padding:7px 10px;font-size:12px}
+  .gtab{padding:5px 9px;font-size:11px}
+  .q-term{font-size:17px}
+  .ans-btn{font-size:13px;padding:11px 12px}
+}
+@media(min-width:701px) and (max-width:900px){
+  .board-side{width:240px}
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="setupOverlay" style="display:none;">
+  <div class="setup-box">
+    <h2>Connect Google Sheet</h2>
+    <p>ใส่ Google Apps Script Web App URL เพื่อเชื่อมบอร์ดกับ Google Sheet</p>
+    <div class="setup-note">
+      วิธีตั้งค่า:<br>
+      1. สร้าง Google Sheet ใหม่ ตั้ง sheet ชื่อ <code>Board</code><br>
+      2. เพิ่ม header row: <code>timestamp</code> | <code>name</code> | <code>message</code><br>
+      3. Extensions > Apps Script > วาง script ด้านล่าง > Deploy > Web App<br>
+      4. Execute as: Me / Access: Anyone > Copy URL
+    </div>
+    <label>Web App URL</label>
+    <input type="url" id="sheetUrl" value="https://script.google.com/macros/s/AKfycby6kVfOuiv14F9frKaxIRSTogQ4ceAfB2n6eFBupawS30HCUcv6brTJHPsuQkrvDT0F/exec">
+    <div class="setup-btns">
+      <button class="ctrl-btn primary" onclick="saveUrl()">Save</button>
+      <button class="ctrl-btn" onclick="skipSetup()">ข้ามไปก่อน</button>
+    </div>
+  </div>
+</div>
+
+<div class="header">
+  <div>
+    <div class="header-title">Vocab Quiz</div>
+    <div class="header-sub">Idioms &amp; Expressions</div>
+  </div>
+  <div class="score-pill">Score: <span id="scoreDisp">0</span></div>
+  <button class="settings-btn" onclick="showSetup()">Sheet</button>
+</div>
+
+<div class="app">
+
+  <div class="quiz-main">
+
+    <div class="top-row">
+      <div class="mode-toggle">
+        <button class="mode-btn active" id="modeGroup" onclick="setMode('group')">By Group</button>
+        <button class="mode-btn" id="modeRandom" onclick="setMode('random')">Random</button>
+      </div>
+      <div class="group-tabs" id="groupTabs"></div>
+    </div>
+
+    <div class="q-card" id="qCard">
+      <div class="q-meta">
+        <span class="q-label">What does this mean?</span>
+        <span class="q-counter" id="qCounter">1 / 4</span>
+      </div>
+      <div class="q-term" id="qTerm">—</div>
+      <div class="q-progress"><div class="q-bar" id="qBar" style="width:0%"></div></div>
+    </div>
+
+    <div class="answers" id="answers"></div>
+
+    <div class="feedback" id="feedback"></div>
+
+    <div class="controls" id="controls">
+      <button class="ctrl-btn" id="prevBtn" onclick="prevQ()" disabled>Back</button>
+      <button class="ctrl-btn primary" id="nextBtn" onclick="nextQ()">Next</button>
+      <span class="prog-txt" id="progTxt">0 / 0</span>
+      <div class="prog-wrap"><div class="prog-bar" id="progBar" style="width:0%"></div></div>
+    </div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-num" id="resScore">0</div>
+      <div class="result-of">out of <span id="resTotal">0</span></div>
+      <div class="result-msg" id="resMsg"></div>
+      <div class="result-btns">
+        <button class="ctrl-btn" onclick="restart()">Try Again</button>
+        <button class="ctrl-btn primary" id="nextGroupBtn" onclick="nextGroupOrRandom()">Next Group</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="board-side">
+    <div class="board-head">
+      <h2>Community Board</h2>
+      <p>เขียนอะไรก็ได้ ทุกคนเห็น</p>
+    </div>
+    <div class="board-form">
+      <input type="text" id="bName" placeholder="ชื่อ (ไม่บังคับ)" maxlength="30">
+      <textarea id="bMsg" placeholder="ข้อความ..." maxlength="200"></textarea>
+      <button class="post-btn" id="postBtn" onclick="postMsg()">Post</button>
+    </div>
+    <div class="board-status" id="bStatus"></div>
+    <div class="board-msgs" id="bMsgs">
+      <div class="board-empty">ยังไม่มีข้อความ</div>
+    </div>
+  </div>
+
+</div>
+
+<button class="board-toggle" onclick="toggleDrawer()">Board</button>
+
+<div class="board-drawer" id="boardDrawer">
+  <div class="drawer-handle"></div>
+  <div class="board-head">
+    <h2>Community Board</h2>
+    <p>เขียนอะไรก็ได้ ทุกคนเห็น</p>
+  </div>
+  <div class="board-form">
+    <input type="text" id="bName2" placeholder="ชื่อ (ไม่บังคับ)" maxlength="30">
+    <textarea id="bMsg2" placeholder="ข้อความ..." maxlength="200"></textarea>
+    <button class="post-btn" onclick="postMsgMobile()">Post</button>
+  </div>
+  <div class="board-status" id="bStatus2"></div>
+  <div class="board-msgs" id="bMsgs2">
+    <div class="board-empty">ยังไม่มีข้อความ</div>
+  </div>
+</div>
+
+<script>
+// ===== DATA =====
+const GROUPS = [
+  {name:"G1",items:[
+    {term:"Let the cat out of the bag",def:"To reveal a secret accidentally"},
+    {term:"Cost an arm and a leg",def:"To be very expensive"},
+    {term:"Walk on air",def:"To feel extremely happy"},
+    {term:"Snowed under",def:"To be extremely busy with work or responsibilities"}
+  ]},
+  {name:"G2",items:[
+    {term:"Beat around the bush",def:"To avoid talking about the main point directly"},
+    {term:"Once in a blue moon",def:"Very rarely"},
+    {term:"Child's play",def:"Something very easy to do"},
+    {term:"Throw in the towel",def:"To give up"}
+  ]},
+  {name:"G3",items:[
+    {term:"Sit on the fence",def:"To avoid choosing a side or making a decision"},
+    {term:"Eat like a horse",def:"To eat a lot"},
+    {term:"Out of the blue",def:"Suddenly and unexpectedly"},
+    {term:"I don't buy it",def:"I do not believe it"}
+  ]},
+  {name:"G4",items:[
+    {term:"Add fuel to the fire",def:"To make a bad situation worse"},
+    {term:"Could eat a horse",def:"To be extremely hungry"},
+    {term:"Take a rain check",def:"To postpone a plan or invitation until another time"}
+  ]},
+  {name:"G5",items:[
+    {term:"Let someone off the hook",def:"To free someone from responsibility or punishment"},
+    {term:"Eat like a bird",def:"To eat very little"},
+    {term:"Pie in the sky",def:"An unrealistic hope or dream"}
+  ]},
+  {name:"G6",items:[
+    {term:"Kick the bucket",def:"To die (informal)"},
+    {term:"Put a sock in it",def:"To stop talking or be quiet"},
+    {term:"I have no clue",def:"I do not know at all"}
+  ]}
+];
+const ALL_ITEMS = GROUPS.flatMap(g => g.items);
+
+// ===== STATE =====
+let mode = 'group';
+let curGroup = 0;
+let questions = [];
+let answers = [];
+let curQ = 0;
+let score = 0;
+// ฝัง URL ของคุณไว้ตรงนี้เป็นค่าเริ่มต้น
+let sheetUrl = 'https://script.google.com/macros/s/AKfycby6kVfOuiv14F9frKaxIRSTogQ4ceAfB2n6eFBupawS30HCUcv6brTJHPsuQkrvDT0F/exec';
+
+// ===== SETUP =====
+function saveUrl(){
+  const v = document.getElementById('sheetUrl').value.trim();
+  if(!v){alert('กรุณาใส่ URL');return;}
+  sheetUrl = v;
+  localStorage.setItem('vsUrl', v);
+  document.getElementById('setupOverlay').style.display = 'none';
+  loadBoard();
+}
+function skipSetup(){ document.getElementById('setupOverlay').style.display = 'none'; }
+function showSetup(){
+  document.getElementById('sheetUrl').value = sheetUrl;
+  document.getElementById('setupOverlay').style.display = 'flex';
+}
+
+// ===== MODE =====
+function setMode(m){
+  mode = m;
+  document.getElementById('modeGroup').classList.toggle('active', m === 'group');
+  document.getElementById('modeRandom').classList.toggle('active', m === 'random');
+  const tabs = document.getElementById('groupTabs');
+  tabs.style.display = m === 'group' ? 'flex' : 'none';
+  if(m === 'random') loadRandom();
+  else loadGroup(curGroup);
+}
+
+// ===== BUILD QUESTIONS =====
+function buildQs(items){
+  const allDefs = [...new Set(ALL_ITEMS.map(x => x.def))];
+  return items.map(item => {
+    const wrongs = shuffle(allDefs.filter(d => d !== item.def)).slice(0, 3);
+    return { term: item.term, correct: item.def, options: shuffle([item.def, ...wrongs]) };
+  });
+}
+
+function loadGroup(idx){
+  curGroup = idx;
+  questions = buildQs(GROUPS[idx].items);
+  startQuiz();
+  buildTabs();
+}
+
+function loadRandom(){
+  const picked = shuffle([...ALL_ITEMS]).slice(0, 8);
+  questions = buildQs(picked);
+  startQuiz();
+}
+
+function startQuiz(){
+  answers = new Array(questions.length).fill(null);
+  curQ = 0;
+  score = 0;
+  document.getElementById('scoreDisp').textContent = 0;
+  showQuizUI(true);
+  renderQ();
+}
+
+function showQuizUI(show){
+  const hide = !show;
+  document.getElementById('qCard').style.display = hide ? 'none' : '';
+  document.getElementById('answers').style.display = hide ? 'none' : '';
+  document.getElementById('feedback').style.display = 'none';
+  document.getElementById('controls').style.display = hide ? 'none' : '';
+  document.getElementById('resultCard').classList.toggle('show', !show);
+}
+
+// ===== TABS =====
+function buildTabs(){
+  const el = document.getElementById('groupTabs');
+  el.innerHTML = '';
+  GROUPS.forEach((g, i) => {
+    const b = document.createElement('button');
+    b.className = 'gtab' + (i === curGroup ? ' active' : '');
+    b.textContent = g.name;
+    b.onclick = () => loadGroup(i);
+    el.appendChild(b);
+  });
+}
+
+// ===== RENDER QUESTION =====
+function renderQ(){
+  const q = questions[curQ];
+  const isAnswered = answers[curQ] !== null;
+
+  document.getElementById('qTerm').textContent = q.term;
+  document.getElementById('qCounter').textContent = (curQ + 1) + ' / ' + questions.length;
+  document.getElementById('qBar').style.width = ((curQ + 1) / questions.length * 100) + '%';
+
+  const grid = document.getElementById('answers');
+  grid.innerHTML = '';
+  q.options.forEach(opt => {
+    const b = document.createElement('button');
+    b.className = 'ans-btn';
+    b.textContent = opt;
+    b.onclick = () => pick(opt, b);
+    if(isAnswered){
+      b.disabled = true;
+      if(opt === q.correct) b.classList.add('correct');
+      else if(answers[curQ] === opt) b.classList.add('wrong');
+    }
+    grid.appendChild(b);
+  });
+
+  const fb = document.getElementById('feedback');
+  if(isAnswered){
+    const ok = answers[curQ] === q.correct;
+    fb.className = 'feedback show ' + (ok ? 'correct' : 'wrong');
+    fb.textContent = ok
+      ? 'Correct! "' + q.term + '" = ' + q.correct
+      : 'The correct answer: ' + q.correct;
+  } else {
+    fb.className = 'feedback';
+  }
+
+  updateProgress();
+  document.getElementById('prevBtn').disabled = curQ === 0;
+  
+  const nextBtn = document.getElementById('nextBtn');
+  if (curQ === questions.length - 1) {
+    nextBtn.textContent = 'Finish';
+  } else {
+    nextBtn.textContent = 'Next';
+  }
+}
+
+function pick(opt, btn){
+  if(answers[curQ] !== null) return;
+  const q = questions[curQ];
+  answers[curQ] = opt;
+  const ok = opt === q.correct;
+  if(ok) score++;
+  document.getElementById('scoreDisp').textContent = score;
+
+  document.querySelectorAll('.ans-btn').forEach(b => {
+    b.disabled = true;
+    if(b.textContent === q.correct) b.classList.add('correct');
+    else if(b === btn && !ok) b.classList.add('wrong');
+  });
+
+  const fb = document.getElementById('feedback');
+  fb.className = 'feedback show ' + (ok ? 'correct' : 'wrong');
+  fb.textContent = ok
+    ? 'Correct! "' + q.term + '" = ' + q.correct
+    : 'The correct answer: ' + q.correct;
+
+  updateProgress();
+
+  if(curQ === questions.length - 1){
+    setTimeout(showResult, 1000);
+  } else {
+    setTimeout(nextQ, 1000);
+  }
+}
+
+function updateProgress(){
+  const done = answers.filter(a => a !== null).length;
+  const total = questions.length;
+  document.getElementById('progTxt').textContent = done + ' / ' + total;
+  document.getElementById('progBar').style.width = (done / total * 100) + '%';
+}
+
+function nextQ(){ 
+  if(curQ < questions.length - 1){ 
+    curQ++; 
+    renderQ(); 
+  } else {
+    showResult();
+  }
+}
+function prevQ(){ if(curQ > 0){ curQ--; renderQ(); } }
+
+function showResult(){
+  showQuizUI(false);
+  const pct = Math.round(score / questions.length * 100);
+  document.getElementById('resScore').textContent = score;
+  document.getElementById('resTotal').textContent = questions.length;
+  document.getElementById('resMsg').textContent =
+    pct === 100 ? 'Perfect! ครบทุกข้อ' :
+    pct >= 70  ? 'Good job! ลองทำอีกครั้งเพื่อทบทวน' :
+                 'Keep going! ฝึกบ่อยๆ จะจำได้เอง';
+  const nb = document.getElementById('nextGroupBtn');
+  if(mode === 'random'){
+    nb.textContent = 'New Random';
+  } else {
+    nb.textContent = curGroup < GROUPS.length - 1 ? 'Next Group' : 'Back to G1';
+  }
+}
+
+function restart(){
+  if(mode === 'random') loadRandom(); else loadGroup(curGroup);
+}
+
+function nextGroupOrRandom(){
+  if(mode === 'random') loadRandom();
+  else loadGroup((curGroup + 1) % GROUPS.length);
+}
+
+// ===== BOARD =====
+function toggleDrawer(){
+  const d = document.getElementById('boardDrawer');
+  d.classList.toggle('open');
+  if(d.classList.contains('open')) syncDrawer();
+}
+
+// เช็คหน้าต่างป๊อปอัปให้ปิดเสมอในตอนเริ่มต้นระบบ
+document.getElementById('setupOverlay').style.display = 'none';
+
+function syncDrawer(){
+  const msgs = document.getElementById('bMsgs');
+  const msgs2 = document.getElementById('bMsgs2');
+  msgs2.innerHTML = msgs.innerHTML;
+}
+
+async function postMsg(){
+  await _doPost(
+    document.getElementById('bName').value.trim() || 'Anonymous',
+    document.getElementById('bMsg').value.trim(),
+    document.getElementById('bStatus'),
+    document.getElementById('bMsg')
+  );
+}
+
+async function postMsgMobile(){
+  await _doPost(
+    document.getElementById('bName2').value.trim() || 'Anonymous',
+    document.getElementById('bMsg2').value.trim(),
+    document.getElementById('bStatus2'),
+    document.getElementById('bMsg2')
+  );
+}
+
+async function _doPost(name, msg, statusEl, msgEl){
+  if(!msg) return;
+  if(!sheetUrl){
+    statusEl.className = 'board-status err';
+    statusEl.textContent = 'ยังไม่ได้ตั้งค่า Sheet URL';
+    return;
+  }
+  statusEl.className = 'board-status';
+  statusEl.textContent = 'Posting...';
+  try {
+    const p = new URLSearchParams({name, message: msg, timestamp: new Date().toISOString(), action:'post'});
+    await fetch(sheetUrl + '?' + p.toString(), {method:'GET', mode:'no-cors'});
+    msgEl.value = '';
+    statusEl.textContent = 'Posted.';
+    addMsg(name, msg);
+    syncDrawer();
+    setTimeout(() => { statusEl.textContent = ''; }, 2000);
+  } catch(e){
+    statusEl.className = 'board-status err';
+    statusEl.textContent = 'Error: ตรวจสอบ Sheet URL';
+  }
+}
+
+async function loadBoard(){
+  if(!sheetUrl) return;
+  try {
+    const r = await fetch(sheetUrl + '?action=get', {mode:'cors'});
+    const d = await r.json();
+    if(d && Array.isArray(d.messages)) renderMsgs(d.messages);
+  } catch(e){}
+}
+
+function renderMsgs(msgs){
+  const c = document.getElementById('bMsgs');
+  if(!msgs.length){ c.innerHTML = '<div class="board-empty">ยังไม่มีข้อความ</div>'; return; }
+  c.innerHTML = '';
+  [...msgs].reverse().forEach(m => {
+    c.appendChild(mkMsg(m.name || 'Anonymous', m.message, m.timestamp));
+  });
+  syncDrawer();
+}
+
+function addMsg(name, text){
+  const c = document.getElementById('bMsgs');
+  const empty = c.querySelector('.board-empty');
+  if(empty) empty.remove();
+  c.prepend(mkMsg(name, text, null));
+}
+
+function mkMsg(name, text, ts){
+  const d = document.createElement('div');
+  d.className = 'msg-item';
+  d.innerHTML = '<div class="msg-name">'+esc(name)+'</div><div class="msg-text">'+esc(text)+'</div><div class="msg-time">'+fmtTime(ts)+'</div>';
+  return d;
+}
+
+function fmtTime(ts){
+  if(!ts) return 'just now';
+  try {
+    const d = new Date(ts);
+    return d.toLocaleDateString('th-TH',{day:'numeric',month:'short'}) + ' ' +
+           d.toLocaleTimeString('th-TH',{hour:'2-digit',minute:'2-digit'});
+  } catch{ return 'just now'; }
+}
+
+function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function shuffle(a){ const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; }
+
+// ===== INIT =====
+buildTabs();
+loadGroup(0);
+if(sheetUrl){ loadBoard(); setInterval(loadBoard, 20000); }
+</script>
+</body>
+</html>
