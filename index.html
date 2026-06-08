@@ -109,9 +109,9 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .result-msg{font-size:14px;color:var(--text);margin:14px 0;line-height:1.6}
 .result-btns{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:16px}
 
-/* BOARD SIDEBAR */
+/* BOARD SIDEBAR (Desktop เท่านั้น) */
 .board-side{width:280px;border-left:1px solid var(--border);background:var(--white);display:flex;flex-direction:column;min-height:0}
-.board-head{padding:12px 14px 10px;border-bottom:1px solid var(--border)}
+.board-head{padding:12px 14px 10px;border-bottom:1px solid var(--border);position:relative}
 .board-head h2{font-size:14px;font-weight:600}
 .board-head p{font-size:12px;color:var(--muted);margin-top:1px}
 .board-form{padding:10px 12px;border-bottom:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
@@ -130,17 +130,51 @@ body{display:flex;flex-direction:column;min-height:100vh}
 .msg-time{font-size:11px;color:var(--muted);margin-top:3px}
 .board-empty{text-align:center;color:var(--muted);font-size:13px;padding:16px 10px;line-height:1.6}
 
-/* BOARD TOGGLE (mobile) */
+/* BOARD TOGGLE BUTTON (Mobile/iPad) */
 .board-toggle{position:fixed;bottom:16px;right:16px;background:var(--accent);color:#fff;border:none;border-radius:50px;padding:10px 18px;font-family:var(--font);font-size:14px;font-weight:500;cursor:pointer;box-shadow:0 2px 12px rgba(37,99,235,.3);z-index:40}
-@media(min-width:701px){ .board-toggle{display:none} }
+
+/* แผ่น Overlay สีดำโปร่งแสง สำหรับจิ้มพื้นที่ว่างแล้วปิดบอร์ด */
+.board-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 55;
+  backdrop-filter: blur(2px);
+  -webkit-backdrop-filter: blur(2px);
+}
+.board-overlay.open { display: block; }
+
+/* ปุ่มกากบาทปิดบอร์ด (Mobile/iPad) */
+.drawer-close-btn {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  color: var(--text);
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
 .board-drawer{display:none}
 
-/* RESPONSIVE */
-@media(max-width:700px){
+/* RESPONSIVE: ปรับให้ครอบคลุมถึงระดับ iPad (1024px) */
+@media(max-width:1024px){
   .board-side{display:none}
-  .board-drawer{display:flex;flex-direction:column;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);z-index:60;max-height:70vh;border-radius:14px 14px 0 0;overflow:hidden;transform:translateY(100%);transition:transform .25s ease}
+  .board-drawer{display:flex;flex-direction:column;position:fixed;bottom:0;left:0;right:0;background:var(--white);border-top:1px solid var(--border);z-index:60;max-height:75vh;border-radius:14px 14px 0 0;overflow:hidden;transform:translateY(100%);transition:transform .25s ease}
   .board-drawer.open{transform:translateY(0)}
-  .drawer-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 6px}
+  .drawer-handle{width:36px;height:4px;background:var(--border);border-radius:2px;margin:10px auto 6px;cursor:pointer}
+}
+
+@media(max-width:700px){
   .answers{grid-template-columns:1fr}
   .q-term{font-size:19px}
   .quiz-main{padding:12px}
@@ -152,8 +186,8 @@ body{display:flex;flex-direction:column;min-height:100vh}
   .q-term{font-size:17px}
   .ans-btn{font-size:13px;padding:11px 12px}
 }
-@media(min-width:701px) and (max-width:900px){
-  .board-side{width:240px}
+@media(min-width:1025px){
+  .board-toggle{display:none}
 }
 </style>
 </head>
@@ -230,12 +264,15 @@ body{display:flex;flex-direction:column;min-height:100vh}
 
 </div>
 
+<div class="board-overlay" id="boardOverlay" onclick="toggleDrawer()"></div>
+
 <button class="board-toggle" onclick="toggleDrawer()">Board</button>
 
 <div class="board-drawer" id="boardDrawer">
-  <div class="drawer-handle"></div>
+  <div class="drawer-handle" onclick="toggleDrawer()"></div>
   <div class="board-head">
     <h2>Community Board</h2>
+    <button class="drawer-close-btn" onclick="toggleDrawer()">✕</button>
     <p>เขียนอะไรก็ได้ ทุกคนเห็น</p>
   </div>
   <div class="board-form">
@@ -331,7 +368,6 @@ function loadGroup(idx){
   buildTabs();
 }
 
-// ===== ฟังก์ชันถัดไปกลับมาแล้วครับ =====
 function nextGroupOrRandom(){
   if(mode === 'random') loadRandom();
   else loadGroup((curGroup + 1) % GROUPS.length);
@@ -488,11 +524,14 @@ function restart(){
 }
 
 // ===== BOARD =====
+// ปรับปรุงฟังก์ชันเปิด-ปิดบอร์ดให้คุมแผ่น Overlay ด้วย
 function toggleDrawer(){
   const d = document.getElementById('boardDrawer');
+  const o = document.getElementById('boardOverlay');
   if(d) {
-    d.classList.toggle('open');
-    if(d.classList.contains('open')) syncDrawer();
+    const isOpen = d.classList.toggle('open');
+    if(o) o.classList.toggle('open', isOpen);
+    if(isOpen) syncDrawer();
   }
 }
 
