@@ -259,7 +259,6 @@ body{display:flex;flex-direction:column;min-height:100vh}
 
   </div>
 
-  <!-- BOARD SIDEBAR (Desktop เท่านั้น) -->
   <div class="board-side">
     <div class="board-head">
       <h2>Community Board</h2>
@@ -278,13 +277,10 @@ body{display:flex;flex-direction:column;min-height:100vh}
 
 </div>
 
-<!-- OVERLAY BACKDROP (คลิกนอกบอร์ดเพื่อปิด) -->
 <div class="board-overlay" id="boardOverlay" onclick="toggleDrawer()"></div>
 
-<!-- BOARD TOGGLE BUTTON (Mobile/iPad) -->
 <button class="board-toggle" onclick="toggleDrawer()">Board</button>
 
-<!-- BOARD DRAWER (Mobile/iPad) -->
 <div class="board-drawer" id="boardDrawer">
   <div class="drawer-handle" onclick="toggleDrawer()"></div>
   <div class="board-head">
@@ -369,12 +365,12 @@ function setMode(m){
   else loadGroup(curGroup);
 }
 
-// ===== BUILD QUESTIONS =====
+// ===== BUILD QUESTIONS (แก้ไขตรรกะ: โจทย์เป็นความหมาย ช้อยส์หลอกเป็นตัวสำนวน) =====
 function buildQs(items){
-  const allDefs = [...new Set(ALL_ITEMS.map(x => x.def))];
+  const allTerms = [...new Set(ALL_ITEMS.map(x => x.term))];
   return items.map(item => {
-    const wrongs = shuffle(allDefs.filter(d => d !== item.def)).slice(0, 3);
-    return { term: item.term, correct: item.def, options: shuffle([item.def, ...wrongs]) };
+    const wrongs = shuffle(allTerms.filter(t => t !== item.term)).slice(0, 3);
+    return { def: item.def, correct: item.term, options: shuffle([item.term, ...wrongs]) };
   });
 }
 
@@ -433,7 +429,7 @@ function renderQ(){
   const q = questions[curQ];
   const isAnswered = answers[curQ] !== null;
 
-  document.getElementById('qTerm').textContent = q.term;
+  document.getElementById('qTerm').textContent = q.def; // แสดงภาษาอังกฤษของครู (ความหมาย) เป็นตัวตั้ง
   document.getElementById('qCounter').textContent = (curQ + 1) + ' / ' + questions.length;
   document.getElementById('qBar').style.width = ((curQ + 1) / questions.length * 100) + '%';
 
@@ -442,7 +438,7 @@ function renderQ(){
   q.options.forEach(opt => {
     const b = document.createElement('button');
     b.className = 'ans-btn';
-    b.textContent = opt;
+    b.textContent = opt; // ปุ่มตัวเลือกจะเป็น "สำนวน"
     b.onclick = () => pick(opt, b);
     if(isAnswered){
       b.disabled = true;
@@ -457,8 +453,8 @@ function renderQ(){
     const ok = answers[curQ] === q.correct;
     fb.className = 'feedback show ' + (ok ? 'correct' : 'wrong');
     fb.textContent = ok
-      ? 'Correct! "' + q.term + '" = ' + q.correct
-      : 'The correct answer: ' + q.correct;
+      ? 'Correct! Meaning: "' + q.def + '" = ' + q.correct
+      : 'The correct answer is: ' + q.correct; // แก้ไขจุดที่เขียน String ผิดจนหน้าเว็บขาว
   } else {
     fb.className = 'feedback';
   }
@@ -491,8 +487,8 @@ function pick(opt, btn){
   const fb = document.getElementById('feedback');
   fb.className = 'feedback show ' + (ok ? 'correct' : 'wrong');
   fb.textContent = ok
-    ? 'Correct! "' + q.term + '" = ' + q.correct
-    : 'The correct answer: ' + q.correct;
+    ? 'Correct! Meaning: "' + q.def + '" = ' + q.correct
+    : 'The correct answer is: ' + q.correct;
 
   updateProgress();
 
